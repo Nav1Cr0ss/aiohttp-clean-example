@@ -1,4 +1,4 @@
-# s-book-store
+# s-storage-api
 
 ## Table of Contents
 - [Prerequisites](#prerequisites)
