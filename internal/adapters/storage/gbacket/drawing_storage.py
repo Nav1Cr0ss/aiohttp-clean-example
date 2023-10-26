@@ -1,4 +1,4 @@
-from aiohttp import StreamReader
+from aiohttp import StreamReader, BodyPartReader
 
 from pkg.storage.google_bucket.storage import Storage, Bucket
 from settings import config
@@ -15,7 +15,8 @@ class BucketDrawing(Bucket):
 class StorageDrawing(Storage):
     bucket = BucketDrawing
 
-    async def upload_drawing(self, file_stream: StreamReader, content_type: str, file_name: str) -> bool:
+    async def upload_drawing(self, file_stream: StreamReader | BodyPartReader, content_type: str,
+                             file_name: str) -> bool:
         return await self._upload_file_in_thread(
             content=file_stream,
             content_type=content_type,

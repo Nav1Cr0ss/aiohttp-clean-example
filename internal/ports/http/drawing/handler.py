@@ -52,10 +52,7 @@ class DrawingHandler(DrawingHandlerIface):
     async def upload_drawing(self, request: Request) -> Response:
         file_stream = request.content
 
-        if file_stream.is_eof():
-            return Response(text="file did not found", status=400)
-
-        # some useful validations ...
+        # validations placed in middleware
 
         content_type: str = request.content_type
 
@@ -66,3 +63,11 @@ class DrawingHandler(DrawingHandlerIface):
         file_id = await self.app.upload_drawing(file_stream, content_type, filename, user.id)
 
         return Response(text=json.dumps({"file_id": file_id}), content_type='application/json', status=200)
+
+    async def upload_drawings(self, request: Request) -> Response:
+        user = request["ctx"].user
+        file_ids = []
+        async for file in await request.multipart():
+            file_id = await self.app.upload_drawing(file, file.headers.get("Content-Type"), file.filename, user.id)
+            file_ids.append(file_id)
+        return Response(text=json.dumps({"file_ids": file_ids}), content_type='application/json', status=200)

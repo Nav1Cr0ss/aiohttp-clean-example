@@ -1,6 +1,6 @@
 from typing import Optional
 
-from aiohttp import StreamReader
+from aiohttp import StreamReader, BodyPartReader
 
 from internal.adapters.client.ml_client.client import MLClient
 from internal.adapters.repository.postgres.drawing.dto.create_file import CreateFileData
@@ -41,7 +41,7 @@ class DrawingApp(DrawingAppIface):
 
     async def upload_drawing(
             self,
-            file_stream: StreamReader,
+            file_stream: StreamReader | BodyPartReader,
             content_type: str,
             file_name: str,
             user_id: int,

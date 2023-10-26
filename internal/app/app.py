@@ -1,10 +1,10 @@
 from abc import ABC, abstractmethod
 from typing import Optional
 
-from aiohttp import StreamReader
+from aiohttp import StreamReader, BodyPartReader
 
 from internal.app.drawing.dto.file import DrawingFilter, FileListSchema
-from internal.app.drawing.dto.file_history import DrawingHistoryFilter, FileHistoryListSchema, FileHistorySchema
+from internal.app.drawing.dto.file_history import DrawingHistoryFilter, FileHistoryListSchema
 from internal.app.user.dto.user import UserListSchema, UserFilter, UserSchema
 from internal.ports.http.user.dto.user_create import UserCreateBody
 from internal.ports.http.user.dto.user_partial_update import UserPartialUpdateBody
@@ -23,7 +23,7 @@ class DrawingAppIface(ABC):
 
     @abstractmethod
     async def upload_drawing(
-            self, file_stream: StreamReader, content_type: str, file_name: str, user_id: int,
+            self, file_stream: StreamReader | BodyPartReader, content_type: str, file_name: str, user_id: int,
     ) -> Optional[int]: ...
 
 

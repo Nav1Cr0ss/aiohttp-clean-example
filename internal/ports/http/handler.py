@@ -13,8 +13,12 @@ class DrawingHandlerIface(ABC):
 
     @abstractmethod
     async def get_drawing_history(self, request: Request) -> Response: ...
+
     @abstractmethod
     async def get_drawings(self, request: Request) -> Response: ...
+
+    @abstractmethod
+    async def upload_drawings(self, request: Request) -> Response: ...
 
 
 class UserHandlerIface(ABC):

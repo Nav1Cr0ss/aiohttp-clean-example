@@ -8,6 +8,7 @@ from pkg.server.aiohttp.middlewares.upload_pdf import upload_pdf
 def get_routes(h: DrawingHandlerIface):
     routes = [
         Route("/drawings/upload", POST, h.upload_drawing, middlewares=(upload_pdf,)),
+        Route("/drawings/batch-upload", POST, h.upload_drawings),
         Route("/drawings/history", GET, h.get_drawings_history, no_auth=True),
         # this route ive added for example, how useful can be such architecture
         Route("/drawings/{id}/history", GET, h.get_drawing_history, no_auth=True),
