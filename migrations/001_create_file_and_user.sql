@@ -1,12 +1,14 @@
-CREATE TYPE role_enum AS ENUM ('admin', 'staff');
-CREATE TYPE drawing_status_enum AS ENUM ('uploaded','pending', 'processed', 'deleted');
+CREATE TYPE roleenum AS ENUM ('admin', 'staff');
+
+
+CREATE TYPE drawingstatusenum AS ENUM ('uploaded','pending', 'processed', 'deleted');
 
 CREATE TABLE account_users
 (
     id            SERIAL PRIMARY KEY,
     username      VARCHAR(150) NOT NULL,
     password_hash VARCHAR(150) NOT NULL,
-    role          role_enum    NOT NULL default 'staff'::role_enum
+    role          roleenum    NOT NULL default 'staff'::roleenum
 );
 
 
