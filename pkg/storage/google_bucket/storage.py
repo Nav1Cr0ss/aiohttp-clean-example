@@ -1,6 +1,11 @@
+import asyncio
+import concurrent.futures
+from asyncio import Semaphore
+from tempfile import NamedTemporaryFile
+
 from aiohttp import StreamReader
 from google.cloud import storage
-from google.cloud.storage import Bucket as BucketGCP, Client as ClientGCP
+from google.cloud.storage import Bucket as BucketGCP, Client as ClientGCP, Blob
 
 
 class Bucket(BucketGCP):
@@ -14,6 +19,7 @@ class Bucket(BucketGCP):
 class Storage:
     bucket: Bucket
     storage_client = None
+    semaphore = Semaphore(2)
 
     def __init__(self):
         self._setup()
@@ -21,21 +27,6 @@ class Storage:
     def _setup(self):
         self.storage_client = storage.Client()
         self.bucket = self.bucket.setup(self.storage_client)
-
-    async def _upload_file_by_name(self, file_name: str, blob_name: str):
-        try:
-            blob = self.bucket.blob(blob_name)
-            blob.upload_from_filename(file_name)
-        except Exception:
-            print("some logging")
-
-    async def _upload_file_by_bytes(self, file_bytes: bytes, blob_name: str) -> str:
-        try:
-            blob = self.bucket.blob(blob_name)
-            blob.upload_from_string(file_bytes)
-            return blob_name
-        except Exception as exc:
-            print("some logging")
 
     async def _upload_file_by_stream(
             self,
@@ -52,6 +43,42 @@ class Storage:
             return True
         except Exception as exc:
             print("some logging")
+            return False
+
+    def _upload_file_by_file_name(self, temp_filename: str, blob: Blob) -> bool:
+        try:
+            blob.upload_from_filename(temp_filename)
+            return True
+        except Exception as exc:
+            print("some logging")
+            return False
+
+    async def _upload_file_in_thread(
+            self,
+            content: StreamReader,
+            content_type: str,
+            blob_name: str,
+    ) -> bool:
+        try:
+            async with self.semaphore:
+                blob = self.bucket.blob(blob_name)
+                blob.content_type = content_type
+
+                temp_file = NamedTemporaryFile(delete=True)
+                temp_file.write(await content.read())
+
+                loop = asyncio.get_event_loop()
+                executor = concurrent.futures.ThreadPoolExecutor()
+                await loop.run_in_executor(
+                    executor,
+                    self._upload_file_by_file_name,
+                    temp_file.name,
+                    blob
+                )
+
+            return True
+        except Exception as exc:
+            print("Some logging")
             return False
 
     async def _download_file_to_bytes(self, blob_name: str) -> bytes:

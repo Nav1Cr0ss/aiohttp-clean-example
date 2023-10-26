@@ -29,6 +29,13 @@ async def upload_pdf(request: Request, handler: callable) -> Response:
             text='Invalid content type. Only PDF files are supported.',
         )
 
+    content_length = int(request.headers['Content-Length'])
+    if content_length > 104857600:
+        raise we.HTTPRequestEntityTooLarge(
+            max_size=104857600,
+            actual_size=content_length
+        )
+
     request["ctx"].extra["filename"] = filename
     resp = await handler(request)
     return resp

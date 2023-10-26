@@ -16,9 +16,8 @@ class StorageDrawing(Storage):
     bucket = BucketDrawing
 
     async def upload_drawing(self, file_stream: StreamReader, content_type: str, file_name: str) -> bool:
-        return await self._upload_file_by_stream(
+        return await self._upload_file_in_thread(
             content=file_stream,
             content_type=content_type,
             blob_name=file_name,
-            chunk_size=SIZE_10MB,
         )
