@@ -49,6 +49,7 @@ class DrawingHandler(DrawingHandlerIface):
 
         return Response(text=drawing_history.model_dump_json(), content_type='application/json', status=200)
 
+    # single uploading, as fast as we can
     async def upload_drawing(self, request: Request) -> Response:
         file_stream = request.content
 
@@ -64,6 +65,7 @@ class DrawingHandler(DrawingHandlerIface):
 
         return Response(text=json.dumps({"file_id": file_id}), content_type='application/json', status=200)
 
+    # multiple uploading
     async def upload_drawings(self, request: Request) -> Response:
         user = request["ctx"].user
         file_ids = []
