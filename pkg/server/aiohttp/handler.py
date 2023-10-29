@@ -1,4 +1,5 @@
 import functools
+from typing import Callable
 
 from aiohttp.web_routedef import RouteDef
 
@@ -18,7 +19,7 @@ class HandlerFactory:
 
     @classmethod
     def build_handler(cls, route: Route) -> RouteDef:
-        middlewares = []
+        middlewares: list[Callable]  = []
 
         if route.middlewares:
             middlewares.extend(route.middlewares)

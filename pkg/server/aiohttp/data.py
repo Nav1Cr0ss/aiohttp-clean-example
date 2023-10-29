@@ -23,8 +23,8 @@ class Route:
 
 @dataclass
 class Context:
-    body: dict[str, any]
-    extra: dict[str, any]
+    body: dict[str, Any]
+    extra: dict[str, Any]
     user: Optional[UserSchema] = None
 
 
