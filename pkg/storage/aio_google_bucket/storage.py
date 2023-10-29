@@ -13,10 +13,10 @@ class Storage(AIOStorage):
     semaphore = Semaphore(10)
 
     async def __upload(
-            self,
-            file_data: io.BytesIO,
-            content_type: str,
-            blob_name: str,
+        self,
+        file_data: io.BytesIO,
+        content_type: str,
+        blob_name: str,
     ) -> bool:
         try:
             async with self.semaphore:
@@ -27,20 +27,18 @@ class Storage(AIOStorage):
                         content_type=content_type,
                         file_data=file_data,
                         object_name=blob_name,
-
                     )
                     return bool(status.get("id"))
-        except Exception as exc:
+        except Exception:
             print("some logging")
             return False
 
     async def _upload_by_stream(
-            self,
-            content: StreamReader | BodyPartReader,
-            content_type: str,
-            blob_name: str,
+        self,
+        content: StreamReader | BodyPartReader,
+        content_type: str,
+        blob_name: str,
     ):
-
         return await self.__upload(
             file_data=io.BytesIO(await content.read()),
             content_type=content_type,

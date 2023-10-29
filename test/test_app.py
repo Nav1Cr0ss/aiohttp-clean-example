@@ -12,6 +12,7 @@ from test.helpers.mock.user_repo import UserRepoMock
 # On current solution db and storage don't have interfaces
 # storage="Background" - just placeholder to make it work
 
+
 @pytest.mark.asyncio
 async def test_create_user():
     user_app = UserApp(
@@ -19,8 +20,10 @@ async def test_create_user():
         auth=DummyProvider(),
     )
 
-    user_id = await user_app.create_user(UserCreateBody(
-        username="TestUser",
-        password="Password",
-    ))
+    user_id = await user_app.create_user(
+        UserCreateBody(
+            username="TestUser",
+            password="Password",
+        )
+    )
     assert user_id == 123

@@ -9,8 +9,12 @@ from settings import config
 class StorageDrawing(Storage):
     bucket_name = config.Storage.BUCKET_DRAWING
 
-    async def upload_drawing(self, file_stream: StreamReader | BodyPartReader, content_type: str,
-                             file_name: str) -> bool:
+    async def upload_drawing(
+        self,
+        file_stream: StreamReader | BodyPartReader,
+        content_type: str,
+        file_name: str,
+    ) -> bool:
         return await self._upload_by_stream(
             content=file_stream,
             content_type=content_type,

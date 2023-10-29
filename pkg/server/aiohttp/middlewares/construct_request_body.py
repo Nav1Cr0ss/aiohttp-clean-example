@@ -7,7 +7,6 @@ from aiohttp.web_response import Response
 
 @middleware
 async def construct_request_body(request: Request, handler: callable) -> Response:
-
     try:
         body = await request.json()
         request["ctx"].body = body

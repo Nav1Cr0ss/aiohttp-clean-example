@@ -14,16 +14,15 @@ from settings import config
 class DummyProvider(AuthProviderIface):
     async def hash_password(self, raw_password: str) -> str:
         hashed_password = hashlib.pbkdf2_hmac(
-            'sha256',
-            raw_password.encode(),
-            config.SECRET_KEY.encode(),
-            100000
+            "sha256", raw_password.encode(), config.SECRET_KEY.encode(), 100000
         )
         return base64.b64encode(hashed_password).decode()
 
     async def auth_user(self, token: str) -> Optional[dict]:
         try:
-            data = jwt.decode(token.split()[-1], config.SECRET_KEY, algorithms=['HS256'])
+            data = jwt.decode(
+                token.split()[-1], config.SECRET_KEY, algorithms=["HS256"]
+            )
             return data
 
         except IndexError:
@@ -34,5 +33,5 @@ class DummyProvider(AuthProviderIface):
             raise ErrUnauthorized("Token is invalid")
 
     async def get_credentials(self, user: UserSchema) -> str:
-        token = jwt.encode(user.model_dump(), config.SECRET_KEY, algorithm='HS256')
+        token = jwt.encode(user.model_dump(), config.SECRET_KEY, algorithm="HS256")
         return token

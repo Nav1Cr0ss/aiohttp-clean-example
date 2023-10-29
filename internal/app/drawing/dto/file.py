@@ -24,5 +24,3 @@ class DrawingFilter(BaseModel):
     filename: Optional[str] = None
     user_id: Optional[int] = None
     status: Optional[DrawingStatusEnum] = None
-
-

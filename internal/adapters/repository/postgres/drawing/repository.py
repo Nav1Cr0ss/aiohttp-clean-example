@@ -21,7 +21,7 @@ class DrawingRepo(DrawingRepoIface):
         stmt = insert(File).values(
             user_id=file_data.user_id,
             filename=file_data.filename,
-            status=file_data.status
+            status=file_data.status,
         )
         file_id = await self.db.insert(stmt)
         return file_id
@@ -41,7 +41,9 @@ class DrawingRepo(DrawingRepoIface):
 
         return drawings
 
-    async def get_drawings_history(self, filters: DrawingHistoryFilter) -> ScalarResult[tuple[FileHistory]]:
+    async def get_drawings_history(
+        self, filters: DrawingHistoryFilter
+    ) -> ScalarResult[tuple[FileHistory]]:
         stmt = select(FileHistory)
 
         if filters.user_id is not None:
@@ -54,7 +56,9 @@ class DrawingRepo(DrawingRepoIface):
             stmt = stmt.where(FileHistory.status == filters.status)
 
         if filters.date_start is not None and filters.date_end is not None:
-            stmt = stmt.where(FileHistory.timestamp.between(filters.date_start, filters.date_end))
+            stmt = stmt.where(
+                FileHistory.timestamp.between(filters.date_start, filters.date_end)
+            )
 
         drawings = await self.db.select(stmt)
 

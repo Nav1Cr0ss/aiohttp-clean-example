@@ -10,11 +10,7 @@ PydanticUser = sqlalchemy_to_pydantic(User)
 
 
 class UserSchema(PydanticUser):
-    password_hash: Optional[str] = Field(
-        exclude=True,
-        default=None
-
-    )
+    password_hash: Optional[str] = Field(exclude=True, default=None)
 
     class Config:
         from_attributes = True

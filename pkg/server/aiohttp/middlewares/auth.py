@@ -1,3 +1,5 @@
+from typing import Callable
+
 from aiohttp.web import middleware
 from aiohttp.web_request import Request
 from aiohttp.web_response import Response
@@ -10,12 +12,12 @@ from pkg.server.aiohttp.errors import ErrUnauthorized
 # middlewares also should be designed as a class for correct dependencies injection
 # for this example I will just call dummy_provider
 @middleware
-async def auth(request: Request, handler: callable) -> Response:
+async def auth(request: Request, handler: Callable) -> Response:
     dummy_provider = DummyProvider()
 
     try:
-        user = await dummy_provider.auth_user(request.headers.get('Authorization', ''))
-        request['ctx'].user = UserSchema(**user)
+        user = await dummy_provider.auth_user(request.headers.get("Authorization", ""))
+        request["ctx"].user = UserSchema(**user)
     except ErrUnauthorized as exc:
         return Response(text=str(exc), status=401)
 

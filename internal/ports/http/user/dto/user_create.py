@@ -6,7 +6,7 @@ class UserCreateBody(BaseModel):
     username: str
     password: str
 
-    @field_validator('username')
+    @field_validator("username")
     @classmethod
     def validate_username(cls, value):
         if len(value) < 4:
@@ -15,7 +15,7 @@ class UserCreateBody(BaseModel):
             raise ValueError("username should only contain alphanumeric characters")
         return value
 
-    @field_validator('password')
+    @field_validator("password")
     @classmethod
     def validate_password(cls, value):
         if len(value) < 6:

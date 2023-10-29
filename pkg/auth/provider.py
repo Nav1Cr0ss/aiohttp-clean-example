@@ -2,17 +2,19 @@ from abc import ABC, abstractmethod
 from typing import Optional
 
 from internal.app.user.dto.user import UserSchema
-from internal.domain.account import User
 
 
 class AuthProviderIface(ABC):
     # There is should method for auth, invoce etc. methods
 
     @abstractmethod
-    async def hash_password(self, raw_password: str) -> str: ...
+    async def hash_password(self, raw_password: str) -> str:
+        ...
 
     @abstractmethod
-    async def auth_user(self, token: str) -> Optional[dict]: ...
+    async def auth_user(self, token: str) -> Optional[dict]:
+        ...
 
     @abstractmethod
-    async def get_credentials(self, user: UserSchema) -> str: ...
+    async def get_credentials(self, user: UserSchema) -> str:
+        ...

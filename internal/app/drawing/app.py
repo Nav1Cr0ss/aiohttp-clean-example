@@ -8,7 +8,11 @@ from internal.adapters.repository.repository import DrawingRepoIface
 from internal.adapters.storage.gbacket.drawing_storage import StorageDrawing
 from internal.app.app import DrawingAppIface
 from internal.app.drawing.dto.file import DrawingFilter, FileListSchema, FileSchema
-from internal.app.drawing.dto.file_history import DrawingHistoryFilter, FileHistoryListSchema, FileHistorySchema
+from internal.app.drawing.dto.file_history import (
+    DrawingHistoryFilter,
+    FileHistoryListSchema,
+    FileHistorySchema,
+)
 from internal.domain.file import DrawingStatusEnum
 from pkg.producer.dto.message import MsgPayload
 from pkg.producer.producer import ProducerIface
@@ -16,11 +20,11 @@ from pkg.producer.producer import ProducerIface
 
 class DrawingApp(DrawingAppIface):
     def __init__(
-            self,
-            repo: DrawingRepoIface,
-            storage: StorageDrawing,
-            producer: ProducerIface,
-            ml_client: MLClient
+        self,
+        repo: DrawingRepoIface,
+        storage: StorageDrawing,
+        producer: ProducerIface,
+        ml_client: MLClient,
     ):
         self.repo = repo
         self.storage = storage
@@ -29,32 +33,42 @@ class DrawingApp(DrawingAppIface):
 
     async def get_drawings(self, filters: DrawingFilter) -> FileListSchema:
         drawings = await self.repo.get_drawings(filters)
-        return FileListSchema([FileSchema.model_validate(drawing) for drawing in drawings])
+        return FileListSchema(
+            [FileSchema.model_validate(drawing) for drawing in drawings]
+        )
 
-    async def get_drawings_history(self, filters: DrawingHistoryFilter) -> FileHistoryListSchema:
+    async def get_drawings_history(
+        self, filters: DrawingHistoryFilter
+    ) -> FileHistoryListSchema:
         drawings = await self.repo.get_drawings_history(filters)
-        return FileHistoryListSchema([FileHistorySchema.model_validate(drawing) for drawing in drawings])
+        return FileHistoryListSchema(
+            [FileHistorySchema.model_validate(drawing) for drawing in drawings]
+        )
 
     async def get_drawing_history(self, drawing_id: int) -> FileHistoryListSchema:
-        drawings = await self.get_drawings_history(DrawingHistoryFilter(file_id=drawing_id))
+        drawings = await self.get_drawings_history(
+            DrawingHistoryFilter(file_id=drawing_id)
+        )
         return drawings
 
     async def upload_drawing(
-            self,
-            file_stream: StreamReader | BodyPartReader,
-            content_type: str,
-            file_name: str,
-            user_id: int,
+        self,
+        file_stream: StreamReader | BodyPartReader,
+        content_type: str,
+        file_name: str,
+        user_id: int,
     ) -> Optional[int]:
         # The main idea is to upload drawings on internal storage as fast as we can and return user 200
         # And then in background we can continue with processing files, optimizations recognitions etc.
 
-        is_uploaded = await self.storage.upload_drawing(file_stream, content_type, file_name)
+        is_uploaded = await self.storage.upload_drawing(
+            file_stream, content_type, file_name
+        )
 
         # On this step we already have file in our volumes,
         # so, we can return 203 and continue processing without holding request obj
         if not is_uploaded:
-            return
+            return None
 
         # It would be greate to create transaction here
         # The code above should work in background task,

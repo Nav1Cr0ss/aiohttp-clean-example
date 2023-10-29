@@ -9,7 +9,9 @@ class AioHttpClient:
         url = f"{self.base_url}{endpoint}"
 
         async with aiohttp.ClientSession() as session:
-            async with session.request(method, url, params=params, data=data, headers=headers) as response:
+            async with session.request(
+                method, url, params=params, data=data, headers=headers
+            ) as response:
                 response_data = await response.text()
                 return response.status, response_data
 
